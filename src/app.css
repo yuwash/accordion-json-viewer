@@ -1,0 +1,10 @@
+@import '../node_modules/foundation-sites/dist/css/foundation.min.css';
+
+.accordion-content {
+  padding: 0.2rem;
+}
+
+.image-preview {
+  max-width: 300px;
+  margin: 0.2rem 0;
+}
