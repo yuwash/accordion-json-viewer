@@ -28,10 +28,11 @@ export default defineConfig({
             type: 'image/png'
           }
         ],
+        start_url: '/accordion-json-viewer',
         display: 'standalone',
         orientation: 'portrait',
         share_target: {
-          action: '/share-target',
+          action: '/accordion-json-viewer',
           method: 'POST',
           enctype: 'multipart/form-data',
           params: {
