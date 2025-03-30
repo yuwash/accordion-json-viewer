@@ -1,3 +1,14 @@
+// From https://vite-pwa-org.netlify.app/guide/inject-manifest.html
+import { cleanupOutdatedCaches, precacheAndRoute } from 'workbox-precaching'
+import { clientsClaim } from 'workbox-core'
+
+cleanupOutdatedCaches()
+
+precacheAndRoute(self.__WB_MANIFEST)
+
+self.skipWaiting()
+clientsClaim()
+
 // Custom service worker to handle share target
 self.addEventListener('install', (event) => {
   event.waitUntil(self.skipWaiting());

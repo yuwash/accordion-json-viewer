@@ -9,6 +9,7 @@ export default defineConfig({
     svelte(),
     VitePWA({
       registerType: 'autoUpdate',
+      strategies: 'injectManifest',
       includeAssets: ['favicon.svg', 'favicon-64.png'],
       manifest: {
         name: 'JSON Viewer',
