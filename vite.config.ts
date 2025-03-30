@@ -28,7 +28,6 @@ export default defineConfig({
             type: 'image/png'
           }
         ],
-        start_url: '/',
         display: 'standalone',
         orientation: 'portrait',
         share_target: {
