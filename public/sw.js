@@ -46,14 +46,14 @@ self.addEventListener('fetch', (event) => {
           // Validate JSON
           const parsedJson = JSON.parse(jsonData);
           const key = await storeSharedData(parsedJson);
+
+          // Redirect to the main page
           return Response.redirect(`/accordion-json-viewer/?sharedKey=${key}`, 303);
         } catch (e) {
-          const key = await storeSharedData({ error: 'Invalid JSON data received' });
-          return Response.redirect(`/accordion-json-viewer/?sharedKey=${key}`, 303);
+          return Response.redirect('/accordion-json-viewer/?error=share-failed', 303);
         }
       } catch (error) {
-        const key = await storeSharedData({ error: 'Failed to process shared content' });
-        return Response.redirect(`/accordion-json-viewer/?sharedKey=${key}`, 303);
+        return Response.redirect('/accordion-json-viewer/?error=share-failed', 303);
       }
     })());
   }

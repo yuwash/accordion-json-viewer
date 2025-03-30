@@ -26,14 +26,7 @@
         const storedData = localStorage.getItem(sharedKey);
         if (storedData) {
           jsonData = JSON.parse(storedData);
-          errorMessage = jsonData.error || null;
-        } else {
-          errorMessage = 'Failed to retrieve shared data';
-          jsonData = null;
         }
-      } catch (error) {
-        errorMessage = 'Error processing shared data';
-        jsonData = null;
       } finally {
         localStorage.removeItem(sharedKey); // Clean up local storage
       }
