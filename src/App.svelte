@@ -6,6 +6,13 @@
   let jsonData: any = null;
   let expandAll = false;
   let jQ;
+  import { onMount } from 'svelte';
+  import FileUpload from './lib/FileUpload.svelte';
+  import JsonViewer from './lib/JsonViewer.svelte';
+
+  let jsonData: any = null;
+  let expandAll = false;
+  let jQ;
   let errorMessage: string | null = null;
 
   function handleJsonLoaded(event: CustomEvent) {
@@ -13,35 +20,37 @@
     errorMessage = null;
   }
 
-  function handleSharedJson(event: MessageEvent) {
-    if (event.data.type === 'SHARED_JSON') {
-      if (event.data.data.error) {
-        errorMessage = event.data.data.error;
-        jsonData = null;
-      } else {
-        jsonData = event.data.data;
-        errorMessage = null;
-      }
-    }
-  }
-
   onMount(() => {
     jQ = window.$;
     jQ(document).foundation();
 
-    // Listen for shared JSON data
-    navigator.serviceWorker?.addEventListener('message', handleSharedJson);
+    // Check for shared key in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const sharedKey = urlParams.get('sharedKey');
+
+    if (sharedKey) {
+      try {
+        const storedData = localStorage.getItem(sharedKey);
+        if (storedData) {
+          jsonData = JSON.parse(storedData);
+          errorMessage = jsonData.error || null;
+        } else {
+          errorMessage = 'Failed to retrieve shared data';
+          jsonData = null;
+        }
+      } catch (error) {
+        errorMessage = 'Error processing shared data';
+        jsonData = null;
+      } finally {
+        localStorage.removeItem(sharedKey); // Clean up local storage
+      }
+    }
 
     // Check if we were opened with an error parameter
-    const urlParams = new URLSearchParams(window.location.search);
     const error = urlParams.get('error');
     if (error === 'share-failed') {
       errorMessage = 'Failed to process shared content';
     }
-
-    return () => {
-      navigator.serviceWorker?.removeEventListener('message', handleSharedJson);
-    };
   });
 </script>
 

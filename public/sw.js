@@ -18,14 +18,10 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(self.clients.claim());
 });
 
-async function broadcastShareData(data) {
-  const clients = await self.clients.matchAll({ type: 'window' });
-  clients.forEach(client => {
-    client.postMessage({
-      type: 'SHARED_JSON',
-      data: data
-    });
-  });
+async function storeSharedData(data) {
+  const key = 'shared-json-' + Date.now(); // Generate a unique key
+  localStorage.setItem(key, JSON.stringify(data));
+  return key;
 }
 
 self.addEventListener('fetch', (event) => {
@@ -49,15 +45,15 @@ self.addEventListener('fetch', (event) => {
         try {
           // Validate JSON
           const parsedJson = JSON.parse(jsonData);
-          await broadcastShareData(parsedJson);
+          const key = await storeSharedData(parsedJson);
+          return Response.redirect(`/accordion-json-viewer/?sharedKey=${key}`, 303);
         } catch (e) {
-          await broadcastShareData({ error: 'Invalid JSON data received' });
+          const key = await storeSharedData({ error: 'Invalid JSON data received' });
+          return Response.redirect(`/accordion-json-viewer/?sharedKey=${key}`, 303);
         }
-
-        // Redirect to the main page
-        return Response.redirect('/accordion-json-viewer/', 303);
       } catch (error) {
-        return Response.redirect('/accordion-json-viewer/?error=share-failed', 303);
+        const key = await storeSharedData({ error: 'Failed to process shared content' });
+        return Response.redirect(`/accordion-json-viewer/?sharedKey=${key}`, 303);
       }
     })());
   }
