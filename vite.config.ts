@@ -33,7 +33,7 @@ export default defineConfig({
         display: 'standalone',
         orientation: 'portrait',
         share_target: {
-          action: '/accordion-json-viewer',
+          action: '/accordion-json-viewer/share-target',
           method: 'POST',
           enctype: 'multipart/form-data',
           params: {
