@@ -6,13 +6,6 @@
   let jsonData: any = null;
   let expandAll = false;
   let jQ;
-  import { onMount } from 'svelte';
-  import FileUpload from './lib/FileUpload.svelte';
-  import JsonViewer from './lib/JsonViewer.svelte';
-
-  let jsonData: any = null;
-  let expandAll = false;
-  let jQ;
   let errorMessage: string | null = null;
 
   function handleJsonLoaded(event: CustomEvent) {
