@@ -44,9 +44,9 @@ self.addEventListener('fetch', (event) => {
         }
 
         // Redirect to the main page
-        return Response.redirect('/', 303);
+        return Response.redirect('/accordion-json-viewer/', 303);
       } catch (error) {
-        return Response.redirect('/?error=share-failed', 303);
+        return Response.redirect('/accordion-json-viewer/?error=share-failed', 303);
       }
     })());
   }
