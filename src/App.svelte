@@ -7,10 +7,12 @@
   let expandAll = false;
   let jQ;
   let errorMessage: string | null = null;
+  let errorReason: string | null = null;
 
   function handleJsonLoaded(event: CustomEvent) {
     jsonData = event.detail;
     errorMessage = null;
+    errorReason = null;
   }
 
   onMount(() => {
@@ -36,6 +38,7 @@
     const error = urlParams.get('error');
     if (error === 'share-failed') {
       errorMessage = 'Failed to process shared content';
+      errorReason = urlParams.get('reason');
     }
   });
 </script>
@@ -53,7 +56,11 @@
 
       {#if errorMessage}
         <div class="callout alert">
-          <p>{errorMessage}</p>
+          <p>{errorMessage}
+            {#if errorReason}
+              (Reason: {errorReason})
+            {/if}
+          </p>
         </div>
       {/if}
 
