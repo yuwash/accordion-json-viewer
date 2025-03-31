@@ -18,9 +18,9 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(self.clients.claim());
 });
 
-async function storeSharedData(data) {
+async function storeSharedData(content) {
   const key = 'shared-json-' + Date.now(); // Generate a unique key
-  localStorage.setItem(key, JSON.stringify(data));
+  localStorage.setItem(key, content);
   return key;
 }
 
@@ -48,19 +48,17 @@ self.addEventListener('fetch', (event) => {
         } else {
           return Response.redirect('/accordion-json-viewer/?error=share-failed&reason=no-file', 303);
         }
+        if (!validateSize(jsonData)) {
+          return Response.redirect('/accordion-json-viewer/?error=share-failed&reason=too-large', 303);
+        }
 
         try {
-          // Validate JSON
-          if (!validateSize(textInput)) {
-            return Response.redirect('/accordion-json-viewer/?error=share-failed&reason=too-large', 303);
-          }
-          const parsedJson = JSON.parse(jsonData);
-          const key = await storeSharedData(parsedJson);
+          const key = await storeSharedData(jsonData);
 
           // Redirect to the main page
           return Response.redirect(`/accordion-json-viewer/?sharedKey=${key}`, 303);
         } catch (e) {
-          return Response.redirect('/accordion-json-viewer/?error=share-failed&reason=invalid-json', 303);
+          return Response.redirect('/accordion-json-viewer/?error=share-failed&reason=storage-failed', 303);
         }
       } catch (error) {
         return Response.redirect('/accordion-json-viewer/?error=share-failed', 303);
