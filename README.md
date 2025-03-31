@@ -9,7 +9,5 @@ The Foundation accordion component is used to display nested JSON objects and ar
 
 *   **File Upload**: Load JSON data from local files.
 *   **Image Preview**: Automatically detect and display images within the JSON data.
-
-Not working at the moment:
 *   **Shared JSON**: Accepts shared JSON data (Web Share Target API) from other applications.
 
