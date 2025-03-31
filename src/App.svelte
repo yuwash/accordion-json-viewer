@@ -24,14 +24,26 @@
     const sharedKey = urlParams.get('sharedKey');
 
     if (sharedKey) {
-      try {
-        const storedData = localStorage.getItem(sharedKey);
-        if (storedData) {
-          jsonData = JSON.parse(storedData);
-        }
-      } finally {
-        localStorage.removeItem(sharedKey); // Clean up local storage
-      }
+      caches.open('shared-data-cache').then(cache => {
+        cache.match(sharedKey).then(response => {
+          if (response) {
+            response.text().then(text => {
+              try {
+                jsonData = JSON.parse(text);
+                errorMessage = jsonData.error || null;
+              } catch (e) {
+                errorMessage = 'Failed to parse shared data';
+                jsonData = null;
+              } finally {
+                cache.delete(sharedKey); // Clean up cache
+              }
+            });
+          } else {
+            errorMessage = 'Failed to retrieve shared data';
+            jsonData = null;
+          }
+        });
+      });
     }
 
     // Check if we were opened with an error parameter

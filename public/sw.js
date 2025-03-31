@@ -18,9 +18,12 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(self.clients.claim());
 });
 
+const SHARED_DATA_CACHE = 'shared-data-cache';
+
 async function storeSharedData(content) {
   const key = 'shared-json-' + Date.now(); // Generate a unique key
-  localStorage.setItem(key, content);
+  const cache = await caches.open(SHARED_DATA_CACHE);
+  await cache.put(key, new Response(content));
   return key;
 }
 
@@ -54,13 +57,14 @@ self.addEventListener('fetch', (event) => {
 
         try {
           const key = await storeSharedData(jsonData);
-
           // Redirect to the main page
           return Response.redirect(`/accordion-json-viewer/?sharedKey=${key}`, 303);
         } catch (e) {
+          console.error("Error storing shared data:", e);
           return Response.redirect('/accordion-json-viewer/?error=share-failed&reason=storage-failed', 303);
         }
       } catch (error) {
+        console.error("Error handling share target:", error);
         return Response.redirect('/accordion-json-viewer/?error=share-failed', 303);
       }
     })());
