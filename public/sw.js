@@ -24,6 +24,16 @@ async function storeSharedData(data) {
   return key;
 }
 
+const MAX_SIZE = 50000; // characters
+
+function validateSize(content: string): boolean {
+    if (content.length > MAX_SIZE) {
+      alert(`Content is too large. Maximum size is ${MAX_SIZE} characters.`);
+      return false;
+    }
+    return true;
+}
+
 self.addEventListener('fetch', (event) => {
   if (event.request.url.endsWith('/share-target')) {
     event.respondWith((async () => {
@@ -44,13 +54,16 @@ self.addEventListener('fetch', (event) => {
 
         try {
           // Validate JSON
+          if (!validateSize(textInput)) {
+            return Response.redirect('/accordion-json-viewer/?error=share-failed&reason=too-large', 303);
+          }
           const parsedJson = JSON.parse(jsonData);
           const key = await storeSharedData(parsedJson);
 
           // Redirect to the main page
           return Response.redirect(`/accordion-json-viewer/?sharedKey=${key}`, 303);
         } catch (e) {
-          return Response.redirect('/accordion-json-viewer/?error=share-failed', 303);
+          return Response.redirect('/accordion-json-viewer/?error=share-failed&reason=invalid-json', 303);
         }
       } catch (error) {
         return Response.redirect('/accordion-json-viewer/?error=share-failed', 303);
