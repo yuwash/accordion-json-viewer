@@ -26,7 +26,7 @@ async function storeSharedData(data) {
 
 const MAX_SIZE = 50000; // characters
 
-function validateSize(content: string): boolean {
+function validateSize(content) {
     if (content.length > MAX_SIZE) {
       alert(`Content is too large. Maximum size is ${MAX_SIZE} characters.`);
       return false;
