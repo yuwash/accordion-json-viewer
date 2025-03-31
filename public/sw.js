@@ -43,13 +43,10 @@ self.addEventListener('fetch', (event) => {
 
         // Handle file share
         const jsonFile = formData.get('json');
-        if (jsonFile && jsonFile.type === 'application/json') {
+        if (jsonFile instanceof File) {
           jsonData = await jsonFile.text();
         } else {
-          // Handle text/url share
-          const text = formData.get('text') || '';
-          const url = formData.get('url') || '';
-          jsonData = text || url;
+          return Response.redirect('/accordion-json-viewer/?error=share-failed&reason=no-file', 303);
         }
 
         try {
